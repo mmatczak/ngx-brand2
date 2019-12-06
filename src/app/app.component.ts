@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, HostBinding} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
+import {Observable} from 'rxjs';
+import {TokenService} from './services/token.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +9,17 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'my-app';
+  @HostBinding('class')
+  brandClass = '';
+
+  myLabel$: Observable<string>;
+
+  constructor(private translate: TranslateService, token: TokenService) {
+    token.brandChanges.subscribe(newBrand => {
+      if (newBrand) {
+        this.brandClass = newBrand;
+        this.translate.use(`en-${newBrand}`);
+      }
+    });
+  }
 }
